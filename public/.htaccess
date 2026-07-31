@@ -1,0 +1,10 @@
+<IfModule mod_rewrite.c>
+    RewriteEngine On
+    
+    # Impede que o Apache tente redirecionar arquivos ou pastas que realmente existem (como css, imagens)
+    RewriteCond %{REQUEST_FILENAME} !-f
+    RewriteCond %{REQUEST_FILENAME} !-d
+    
+    # Redireciona tudo que sobrar para o index.php, passando a rota na variável 'url'
+    RewriteRule ^(.*)$ index.php?url=$1 [QSA,L]
+</IfModule>
