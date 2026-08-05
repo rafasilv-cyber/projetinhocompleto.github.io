@@ -13,18 +13,24 @@
                 <h4 class="mb-0">Cadastrar Nova Categoria</h4>
             </div>
             <div class="card-body">
-                <form action="/projetinhocompleto.github.io/public/index.php?url=categoria/salvar" method="POST"></form>
-                    <div class="mb-3">
-                        <label class="form-label fw-bold">Nome da Categoria *</label>
-                        <input type="text" name="nome" class="form-control" placeholder="Ex: Suporte Técnico" required>
-                    </div>
-                    <div class="mb-4">
-                        <label class="form-label fw-bold">Descrição</label>
-                        <textarea name="descricao" class="form-control" rows="3" placeholder="Breve descrição sobre os chamados desta categoria..."></textarea>
-                    </div>
-                    <button type="submit" class="btn btn-success w-100 mb-2">Salvar Categoria</button>
-                    <a href="/projetinhocompleto.github.io/public/index.php?url=categoria/index" class="btn btn-outline-secondary w-100">Cancelar e Voltar</a>
-                </form>
+                <form action="?url=categoria/salvar" method="POST">
+    
+    <div class="mb-3">
+        <label class="form-label fw-bold">Nome da Categoria *</label>
+        <input type="text" name="nome" class="form-control" required>
+    </div>
+
+    <div class="mb-3">
+        <label class="form-label fw-bold">Descrição</label>
+        <textarea name="descricao" class="form-control" rows="3"></textarea>
+    </div>
+
+    <div class="d-grid gap-2">
+        <button type="submit" class="btn btn-success">Salvar Categoria</button>
+        <a href="?url=categoria/index" class="btn btn-outline-secondary">Cancelar e Voltar</a>
+    </div>
+
+</form>
             </div>
         </div>
     </div>

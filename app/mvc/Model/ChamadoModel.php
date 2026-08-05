@@ -14,6 +14,26 @@ class ChamadoModel
      * RF02 - Listar todos os chamados
      * Traz os nomes do Usuário e da Categoria usando JOIN
      */
+
+public function salvar($titulo, $descricao, $categoria_id, $usuario_id, $prioridade)
+    {
+        // Conecta ao banco e prepara a query de inserção
+        $sql = "INSERT INTO chamados (titulo, descricao, categoria_id, usuario_id, prioridade) 
+                VALUES (:titulo, :descricao, :categoria_id, :usuario_id, :prioridade)";
+        
+        $stmt = $this->db->prepare($sql);
+        
+        // Substitui as variáveis com segurança
+        $stmt->bindValue(':titulo', $titulo);
+        $stmt->bindValue(':descricao', $descricao);
+        $stmt->bindValue(':categoria_id', $categoria_id);
+        $stmt->bindValue(':usuario_id', $usuario_id);
+        $stmt->bindValue(':prioridade', $prioridade);
+        
+        // Executa o salvamento no banco de dados
+        return $stmt->execute();
+    }
+
     public function listarTodos()
     {
         $sql = "SELECT c.*, cat.nome AS categoria_nome, u.nome AS usuario_nome 

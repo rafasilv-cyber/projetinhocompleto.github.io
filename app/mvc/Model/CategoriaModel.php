@@ -22,14 +22,14 @@ class CategoriaModel
         return $stmt->fetch(PDO::FETCH_ASSOC);
     }
 
-    public function cadastrar(array $dados): bool
-    {
-        $stmt = $this->db->prepare("INSERT INTO categorias (nome, descricao) VALUES (:nome, :descricao)");
-        return $stmt->execute([
-            ':nome'      => $dados['nome'],
-            ':descricao' => $dados['descricao']
-        ]);
-    }
+    public function cadastrar($nome, $descricao)
+{
+    $sql = "INSERT INTO categorias (nome, descricao) VALUES (:nome, :descricao)";
+    $stmt = $this->db->prepare($sql);
+    $stmt->bindValue(':nome', $nome);
+    $stmt->bindValue(':descricao', $descricao);
+    return $stmt->execute();
+}
 
     public function atualizar(array $dados): bool
     {

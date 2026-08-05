@@ -6,7 +6,19 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
 </head>
 <body class="bg-light">
-    <!-- Pode copiar o mesmo <nav> do dashboard aqui -->
+     <nav class="navbar navbar-expand-lg navbar-dark bg-dark mb-4">
+        <div class="container">
+            <a class="navbar-brand fw-bold" href="/home">HelpDesk</a>
+            <div class="collapse navbar-collapse">
+                <ul class="navbar-nav ms-auto">
+                   <li class="nav-item"><a class="nav-link" href="?url=home">Dashboard</a></li>
+                    <li class="nav-item"><a class="nav-link active" href="?url=chamado/index">Chamados</a></li>
+                    <li class="nav-item"><a class="nav-link" href="?url=categoria/index">Categorias</a></li>
+                    <li class="nav-item"><a class="nav-link" href="?url=usuario/index">Usuários</a></li>
+                </ul>
+            </div>
+        </div>
+    </nav>
     <div class="container mt-4">
         <div class="d-flex justify-content-between align-items-center mb-3">
             <h2>Gerenciamento de Chamados</h2>

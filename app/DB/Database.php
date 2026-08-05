@@ -7,7 +7,7 @@ class Database
     public static function getConnection(): PDO
     {
         if (self::$instance === null) {
-            $dsn = "mysql:host=localhost;dbname=chamados;charset=utf8";
+            $dsn = "mysql:host=localhost;dbname=gestao;charset=utf8";
             $usuario = "root";
             $senha = "";
 

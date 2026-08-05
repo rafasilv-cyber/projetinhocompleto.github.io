@@ -13,7 +13,7 @@
                 <h4 class="mb-0">Editar Categoria #<?= $categoria['id'] ?></h4>
             </div>
             <div class="card-body">
-                <form action="?url=categoria/atualizar/<?= $categoria['id'] ?>" method="POST">
+                <form action="?url=categoria/atualizar/<?= $categoria['id']; ?>" method="POST"></form>
                     <div class="mb-3">
                         <label class="form-label fw-bold">Nome da Categoria *</label>
                         <input type="text" name="nome" class="form-control" value="<?= htmlspecialchars($categoria['nome']) ?>" required>

@@ -76,8 +76,8 @@ try {
     // Chama o método do controller passando os parâmetros restantes da URL
     call_user_func_array([$controller, $methodName], $params);
 
-} catch (Exception $e) {
+} catch (Throwable $e) {
     http_response_code(404);
-    echo "<h1>Erro 404</h1>";
+    echo "<h1>Erro no Sistema</h1>";
     echo "<p>" . htmlspecialchars($e->getMessage()) . "</p>";
 }

@@ -56,7 +56,13 @@
                                     <td><?= htmlspecialchars($u['email']) ?></td>
                                     <td class="text-end">
                                         <a href="?url=usuario/editar/<?= $u['id'] ?>" class="btn btn-sm btn-warning">Editar</a>
-                                        <a href="?url=usuario/excluir/<?= $u['id'] ?>" class="btn btn-sm btn-danger" onclick="return confirm('Excluir este usuário permanentemente?')">Excluir</a>
+                                        <!-- Como deve ficar o botão de excluir -->
+                                <!-- Verifique se o botão Excluir está exatamente assim: -->
+                                                            <a href="?url=usuario/excluir/<?= $u['id']; ?>" 
+                            class="btn btn-danger btn-sm" 
+                            onclick="return confirm('Deseja realmente excluir este usuário?');">
+                            Excluir
+                            </a>
                                     </td>
                                 </tr>
                             <?php endforeach; ?>

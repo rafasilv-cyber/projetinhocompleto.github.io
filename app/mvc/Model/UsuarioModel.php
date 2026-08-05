@@ -34,34 +34,34 @@ class UsuarioModel
         ]);
     }
 
-    public function atualizar(array $dados): bool
-    {
-        if (!empty($dados['senha'])) {
-            $sql = "UPDATE usuarios SET nome = :nome, email = :email, senha = :senha WHERE id = :id";
-            $params = [
-                ':id'    => $dados['id'],
-                ':nome'  => $dados['nome'],
-                ':email' => $dados['email'],
-                ':senha' => password_hash($dados['senha'], PASSWORD_BCRYPT)
-            ];
-        } else {
-            $sql = "UPDATE usuarios SET nome = :nome, email = :email WHERE id = :id";
-            $params = [
-                ':id'    => $dados['id'],
-                ':nome'  => $dados['nome'],
-                ':email' => $dados['email']
-            ];
-        }
-
+   public function atualizar($id, $nome, $email, $senha)
+{
+    // Se o usuário digitou uma nova senha, atualiza a senha também
+    if (!empty($senha)) {
+        $sql = "UPDATE usuarios SET nome = :nome, email = :email, senha = :senha WHERE id = :id";
         $stmt = $this->db->prepare($sql);
-        return $stmt->execute($params);
+        $stmt->bindValue(':senha', password_hash($senha, PASSWORD_DEFAULT));
+    } else {
+        // Se a senha ficou em branco, mantém a senha antiga e atualiza só nome e email
+        $sql = "UPDATE usuarios SET nome = :nome, email = :email WHERE id = :id";
+        $stmt = $this->db->prepare($sql);
     }
 
-    public function deletar(int $id): bool
-    {
-        $stmt = $this->db->prepare("DELETE FROM usuarios WHERE id = :id");
-        return $stmt->execute([':id' => $id]);
-    }
+    $stmt->bindValue(':nome', $nome);
+    $stmt->bindValue(':email', $email);
+    $stmt->bindValue(':id', $id);
+
+    return $stmt->execute();
+}
+
+public function excluir($id)
+{
+    $sql = "DELETE FROM usuarios WHERE id = :id";
+    // Trocamos $this->pdo por $this->db
+    $stmt = $this->db->prepare($sql); 
+    $stmt->bindValue(':id', $id);
+    return $stmt->execute();
+}
 
     public function contarTodos(): int
     {

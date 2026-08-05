@@ -47,39 +47,31 @@ class UsuarioController
         require_once VIEW_PATH . '/usuarios/editar.php';
     }
 
-    public function atualizar($id = null)
-    {
-        if ($_SERVER['REQUEST_METHOD'] === 'POST' && $id) {
-            $nome  = trim($_POST['nome'] ?? '');
-            $email = trim($_POST['email'] ?? '');
-            $senha = $_POST['senha'] ?? '';
+    public function atualizar($id)
+{
+    if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+        $nome  = $_POST['nome'] ?? '';
+        $email = $_POST['email'] ?? '';
+        $senha = $_POST['senha'] ?? '';
 
-            if (empty($nome) || empty($email)) {
-                $_SESSION['erro'] = 'Nome e e-mail são obrigatórios!';
-                header("Location: /usuario/editar/{$id}");
-                exit;
-            }
+        // LINHA 63: Passe as 4 variáveis separadas por vírgula nesta ordem exata
+        $this->usuarioModel->atualizar($id, $nome, $email, $senha);
 
-            $this->usuarioModel->atualizar([
-                'id'    => (int)$id,
-                'nome'  => $nome,
-                'email' => $email,
-                'senha' => $senha
-            ]);
-
-            $_SESSION['sucesso'] = 'Usuário atualizado com sucesso!';
-            header('Location: /usuario/index');
-            exit;
-        }
-    }
-
-    public function excluir($id = null)
-    {
-        if ($id) {
-            $this->usuarioModel->deletar((int)$id);
-            $_SESSION['sucesso'] = 'Usuário excluído!';
-        }
-        header('Location: /usuario/index');
+        // Redireciona para a lista
+        header("Location: ?url=usuario/index");
         exit;
     }
+}
+
+public function excluir($id = null)
+{
+    if (!$id) {
+        header("Location: ?url=usuario/index");
+        exit;
+    }
+
+    $this->usuarioModel->excluir((int)$id);
+    header("Location: ?url=usuario/index");
+    exit;
+}
 }

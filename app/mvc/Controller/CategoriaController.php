@@ -21,54 +21,46 @@ class CategoriaController
     }
 
     public function salvar()
-    {
-        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-            $nome = trim($_POST['nome'] ?? '');
-            $descricao = trim($_POST['descricao'] ?? '');
+{
+    if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+        $nome = trim($_POST['nome'] ?? '');
+        $descricao = trim($_POST['descricao'] ?? '');
 
-            if (empty($nome)) {
-                $_SESSION['erro'] = 'O nome da categoria é obrigatório!';
-                header('Location: /categoria/criar');
-                exit;
-            }
-
-            $this->categoriaModel->cadastrar(['nome' => $nome, 'descricao' => $descricao]);
-            $_SESSION['sucesso'] = 'Categoria cadastrada com sucesso!';
-            header('Location: /categoria/index');
-
-            // Redireciona para o Dashboard (home)
-    header("Location: /projetinhocompleto.github.io/public/index.php?url=home");
-    exit;
-}
-     
-        
-    }
-
-    public function editar($id = null)
-    {
-        if (!$id) { header('Location: /categoria/index'); exit; }
-        $categoria = $this->categoriaModel->buscarPorId((int)$id);
-        require_once VIEW_PATH . '/categorias/editar.php';
-    }
-
-    public function atualizar($id = null)
-    {
-        if ($_SERVER['REQUEST_METHOD'] === 'POST' && $id) {
-            $nome = trim($_POST['nome'] ?? '');
-            $descricao = trim($_POST['descricao'] ?? '');
-
-            if (empty($nome)) {
-                $_SESSION['erro'] = 'O nome da categoria é obrigatório!';
-                header("Location: /categoria/editar/{$id}");
-                exit;
-            }
-
-            $this->categoriaModel->atualizar(['id' => (int)$id, 'nome' => $nome, 'descricao' => $descricao]);
-            $_SESSION['sucesso'] = 'Categoria atualizada!';
-            header('Location: /categoria/index');
-            exit;
+        if (!empty($nome)) {
+            $this->categoriaModel->cadastrar($nome, $descricao);
+            $_SESSION['sucesso'] = "Categoria cadastrada com sucesso!";
+        } else {
+            $_SESSION['erro'] = "O nome da categoria é obrigatório!";
         }
+
+        header("Location: ?url=categoria/index");
+        exit;
     }
+}
+
+   public function editar($id = null)
+{
+    if (!$id) {
+        header("Location: ?url=categoria/index");
+        exit;
+    }
+    $categoria = $this->categoriaModel->buscarPorId((int)$id);
+    require_once VIEW_PATH . '/categorias/editar.php';
+}
+
+public function atualizar($id)
+{
+    if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+        $nome = trim($_POST['nome'] ?? '');
+        $descricao = trim($_POST['descricao'] ?? '');
+
+        $this->categoriaModel->atualizar($id, $nome, $descricao);
+
+        $_SESSION['sucesso'] = "Categoria atualizada com sucesso!";
+        header("Location: ?url=categoria/index");
+        exit;
+    }
+}   
 
     public function excluir($id = null)
     {
