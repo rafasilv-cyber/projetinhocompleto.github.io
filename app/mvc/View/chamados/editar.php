@@ -28,6 +28,28 @@
                         <label>Descrição *</label>
                         <textarea name="descricao" class="form-control" rows="4" required><?= htmlspecialchars($chamado['descricao']) ?></textarea>
                     </div>
+
+                <div class="mb-3">
+    <label>Categoria *</label>
+    <select name="categoria_id" class="form-select" required>
+        <?php foreach ($categorias as $cat): ?>
+            <option value="<?= $cat['id'] ?>" <?= $cat['id'] == $chamado['categoria_id'] ? 'selected' : '' ?>>
+                <?= htmlspecialchars($cat['nome']) ?>
+            </option>
+        <?php endforeach; ?>
+    </select>
+</div>
+
+<div class="mb-3">
+    <label>Prioridade</label>
+    <select name="prioridade" class="form-select">
+        <option value="baixa" <?= $chamado['prioridade'] == 'baixa' ? 'selected' : '' ?>>Baixa</option>
+        <option value="media" <?= $chamado['prioridade'] == 'media' ? 'selected' : '' ?>>Média</option>
+        <option value="alta" <?= $chamado['prioridade'] == 'alta' ? 'selected' : '' ?>>Alta</option>
+        <option value="urgente" <?= $chamado['prioridade'] == 'urgente' ? 'selected' : '' ?>>Urgente</option>
+    </select>
+</div>
+
                     <!-- (Adicione os campos categoria e prioridade mantendo o padrão de value/selected) -->
                     <button type="submit" class="btn btn-success w-100">Atualizar Chamado</button>
                     <a href="?url=chamado/index" class="btn btn-link w-100 text-center mt-2">Cancelar</a>

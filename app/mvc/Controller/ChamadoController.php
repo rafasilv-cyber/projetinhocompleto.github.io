@@ -49,23 +49,37 @@ class ChamadoController
      * Recebe os dados via formulário POST
      */
     public function salvar()
-    {
-        // Pega os dados do formulário
-    $titulo = $_POST['titulo'];
-    $categoria_id = $_POST['categoria_id'];
-    $prioridade = $_POST['prioridade'];
-    $descricao = $_POST['descricao'];
+{
+    $titulo = trim($_POST['titulo'] ?? '');
+    $categoria_id = $_POST['categoria_id'] ?? null;
+    $prioridade = $_POST['prioridade'] ?? 'media';
+    $descricao = trim($_POST['descricao'] ?? '');
 
-    // Força temporariamente o ID do usuário como 1 (já que não temos login pronto)
-    $usuario_id = 1; 
+    // Validação básica
+    if (empty($titulo) || empty($categoria_id) || empty($descricao)) {
+        $_SESSION['erro'] = 'Preencha todos os campos obrigatórios!';
+        header("Location: ?url=chamado/criar");
+        exit;
+    }
 
-    // Chama o Model para salvar, passando o usuario_id
+    // Busca um usuário válido no banco (temporário até ter login real)
+    $usuarios = $this->categoriaModel === null ? [] : null; // placeholder, ver nota abaixo
+    $usuarioModel = new UsuarioModel();
+    $usuariosExistentes = $usuarioModel->listarTodos();
+
+    if (empty($usuariosExistentes)) {
+        $_SESSION['erro'] = 'Nenhum usuário cadastrado no sistema. Cadastre um usuário antes de abrir chamados.';
+        header("Location: ?url=usuario/criar");
+        exit;
+    }
+
+    $usuario_id = $usuariosExistentes[0]['id']; // pega o primeiro disponível
+
     $this->chamadoModel->salvar($titulo, $descricao, $categoria_id, $usuario_id, $prioridade);
 
-    // Redireciona de volta para a lista (lembre-se do caminho absoluto com ?url=)
-    header("Location: /PROJETINHOCOMPLETO.GITHUB.IO/public/index.php?url=chamado/index");
+    header("Location: ?url=chamado/index");
     exit;
-    }
+}
 
     /**
      * Exibir formulário de edição com os dados do chamado
@@ -122,14 +136,17 @@ class ChamadoController
      * RF02 - Excluir chamado
      * URL: /chamado/excluir/5
      */
-    public function excluir($id = null)
-    {
-        if ($id) {
+ public function excluir($id = null)
+{
+    if ($id) {
+        try {
             $this->chamadoModel->deletar((int)$id);
             $_SESSION['sucesso'] = 'Chamado excluído com sucesso!';
+        } catch (Exception $e) {
+            $_SESSION['erro'] = 'Não foi possível excluir o chamado.';
         }
-
-        header('Location: /chamado/index');
-        exit;
     }
+    header('Location: ?url=chamado/index');
+    exit;
 }
+}       

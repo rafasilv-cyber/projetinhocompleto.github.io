@@ -13,18 +13,18 @@
                 <h4 class="mb-0">Editar Categoria #<?= $categoria['id'] ?></h4>
             </div>
             <div class="card-body">
-                <form action="?url=categoria/atualizar/<?= $categoria['id']; ?>" method="POST"></form>
-                    <div class="mb-3">
-                        <label class="form-label fw-bold">Nome da Categoria *</label>
-                        <input type="text" name="nome" class="form-control" value="<?= htmlspecialchars($categoria['nome']) ?>" required>
-                    </div>
-                    <div class="mb-4">
-                        <label class="form-label fw-bold">Descrição</label>
-                        <textarea name="descricao" class="form-control" rows="3"><?= htmlspecialchars($categoria['descricao'] ?? '') ?></textarea>
-                    </div>
-                    <button type="submit" class="btn btn-success w-100 mb-2">Atualizar Categoria</button>
-                    <a href="?url=categoria/index" class="btn btn-outline-secondary w-100">Cancelar</a>
-                </form>
+                <form action="?url=categoria/atualizar/<?= $categoria['id']; ?>" method="POST">
+    <div class="mb-3">
+        <label class="form-label fw-bold">Nome da Categoria *</label>
+        <input type="text" name="nome" class="form-control" value="<?= htmlspecialchars($categoria['nome']) ?>" required>
+    </div>
+    <div class="mb-4">
+        <label class="form-label fw-bold">Descrição</label>
+        <textarea name="descricao" class="form-control" rows="3"><?= htmlspecialchars($categoria['descricao'] ?? '') ?></textarea>
+    </div>
+    <button type="submit" class="btn btn-success w-100 mb-2">Atualizar Categoria</button>
+    <a href="?url=categoria/index" class="btn btn-outline-secondary w-100">Cancelar</a>
+</form>
             </div>
         </div>
     </div>

@@ -35,7 +35,7 @@ class UsuarioController
 
             $this->usuarioModel->cadastrar(['nome' => $nome, 'email' => $email, 'senha' => $senha]);
             $_SESSION['sucesso'] = 'Usuário cadastrado com sucesso!';
-            header('Location: projetinhocompleto.github.io/public/index.php?url=usuario/index');
+            header("Location: ?url=modulo/acao");
             exit;
         }
     }

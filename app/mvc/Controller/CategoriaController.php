@@ -54,13 +54,23 @@ public function atualizar($id)
         $nome = trim($_POST['nome'] ?? '');
         $descricao = trim($_POST['descricao'] ?? '');
 
-        $this->categoriaModel->atualizar($id, $nome, $descricao);
+        if (empty($nome)) {
+            $_SESSION['erro'] = "O nome da categoria é obrigatório!";
+            header("Location: ?url=categoria/editar/{$id}");
+            exit;
+        }
+
+        $this->categoriaModel->atualizar([
+            'id'        => (int)$id,
+            'nome'      => $nome,
+            'descricao' => $descricao,
+        ]);
 
         $_SESSION['sucesso'] = "Categoria atualizada com sucesso!";
         header("Location: ?url=categoria/index");
         exit;
     }
-}   
+}
 
     public function excluir($id = null)
     {
@@ -72,7 +82,7 @@ public function atualizar($id)
                 $_SESSION['erro'] = 'Não é possível excluir categorias com chamados vinculados.';
             }
         }
-        header('Location: /categoria/index');
+        header('Location: ?url=categoria/index');
         exit;
     }
 }
