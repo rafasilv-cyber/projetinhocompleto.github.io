@@ -14,7 +14,7 @@ class HomeController
         // Coleta todos os dados para o Dashboard (RF04)
         $totais               = $this->homeModel->getTotais();
         $chamadosPorCategoria = $this->homeModel->getChamadosPorCategoria();
-        $chamadosPorPrioridad = $this->homeModel->getChamadosPorPrioridade();
+        $chamadosPorPrioridade = $this->homeModel->getChamadosPorPrioridade();
         $ultimosChamados      = $this->homeModel->getUltimosChamados(5);
 
         // Envia os dados para a View do Dashboard

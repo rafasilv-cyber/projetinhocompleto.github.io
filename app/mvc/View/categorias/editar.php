@@ -1,32 +1,31 @@
-<!DOCTYPE html>
-<html lang="pt-br">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Editar Categoria - HelpDesk</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-</head>
-<body class="bg-light">
-    <div class="container mt-5" style="max-width: 500px;">
-        <div class="card shadow-sm">
-            <div class="card-header bg-warning text-dark">
-                <h4 class="mb-0">Editar Categoria #<?= $categoria['id'] ?></h4>
-            </div>
-            <div class="card-body">
-                <form action="?url=categoria/atualizar/<?= $categoria['id']; ?>" method="POST">
-    <div class="mb-3">
-        <label class="form-label fw-bold">Nome da Categoria *</label>
-        <input type="text" name="nome" class="form-control" value="<?= htmlspecialchars($categoria['nome']) ?>" required>
+<?php
+    $htmlTitle    = 'Editar categoria';
+    $activeMenu   = 'categorias';
+    $pageTitle    = 'Editar categoria';
+    $pageSubtitle = 'Atualize os dados da categoria #' . $categoria['id'];
+    require_once PARTIAL_PATH . '/head.php';
+    require_once PARTIAL_PATH . '/sidebar.php';
+?>
+
+<div class="form-card">
+    <div class="form-card-head">
+        <div class="stat-icon" style="--stat-color: var(--amber); --stat-bg: var(--amber-soft);">&#9998;</div>
+        <h3>Editar categoria #<?= $categoria['id'] ?></h3>
     </div>
-    <div class="mb-4">
-        <label class="form-label fw-bold">Descrição</label>
-        <textarea name="descricao" class="form-control" rows="3"><?= htmlspecialchars($categoria['descricao'] ?? '') ?></textarea>
-    </div>
-    <button type="submit" class="btn btn-success w-100 mb-2">Atualizar Categoria</button>
-    <a href="?url=categoria/index" class="btn btn-outline-secondary w-100">Cancelar</a>
-</form>
-            </div>
+    <form class="form-card-body" action="?url=categoria/atualizar/<?= $categoria['id']; ?>" method="POST">
+        <div class="field">
+            <label for="nome">Nome da categoria *</label>
+            <input type="text" id="nome" name="nome" class="input" value="<?= htmlspecialchars($categoria['nome']) ?>" required>
         </div>
-    </div>
-</body>
-</html>
+        <div class="field">
+            <label for="descricao">Descrição</label>
+            <textarea id="descricao" name="descricao" class="textarea" rows="3"><?= htmlspecialchars($categoria['descricao'] ?? '') ?></textarea>
+        </div>
+        <div class="form-actions">
+            <button type="submit" class="btn btn-primary btn-block">Atualizar categoria</button>
+            <a href="?url=categoria/index" class="btn btn-outline btn-block">Cancelar</a>
+        </div>
+    </form>
+</div>
+
+<?php require_once PARTIAL_PATH . '/footer.php'; ?>

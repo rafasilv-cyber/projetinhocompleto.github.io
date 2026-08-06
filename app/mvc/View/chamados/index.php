@@ -1,57 +1,68 @@
-<!DOCTYPE html>
-<html lang="pt-br">
-<head>
-    <meta charset="UTF-8">
-    <title>Chamados - HelpDesk</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-</head>
-<body class="bg-light">
-     <nav class="navbar navbar-expand-lg navbar-dark bg-dark mb-4">
-        <div class="container">
-            <a class="navbar-brand fw-bold" href="/home">HelpDesk</a>
-            <div class="collapse navbar-collapse">
-                <ul class="navbar-nav ms-auto">
-                   <li class="nav-item"><a class="nav-link" href="?url=home">Dashboard</a></li>
-                    <li class="nav-item"><a class="nav-link active" href="?url=chamado/index">Chamados</a></li>
-                    <li class="nav-item"><a class="nav-link" href="?url=categoria/index">Categorias</a></li>
-                    <li class="nav-item"><a class="nav-link" href="?url=usuario/index">Usuários</a></li>
-                </ul>
-            </div>
-        </div>
-    </nav>
-    <div class="container mt-4">
-        <div class="d-flex justify-content-between align-items-center mb-3">
-            <h2>Gerenciamento de Chamados</h2>
-            <a href="/projetinhocompleto.github.io/public/index.php?url=chamado/criar" class="btn btn-primary">+ Novo Chamado</a>
-        </div>
+<?php
+    $htmlTitle    = 'Chamados';
+    $activeMenu   = 'chamados';
+    $pageTitle    = 'Gerenciamento de chamados';
+    $pageSubtitle = 'Acompanhe e trate os chamados abertos no sistema';
+    require_once PARTIAL_PATH . '/head.php';
+    require_once PARTIAL_PATH . '/sidebar.php';
 
-        <form method="GET" action="/projetinhocompleto.github.io/public/index.php?url=chamado/index" class="mb-4">
-            <div class="input-group">
-                <input type="text" name="busca" class="form-control" placeholder="Pesquisar por título ou descrição..." value="<?= htmlspecialchars($_GET['busca'] ?? '') ?>">
-                <button class="btn btn-outline-secondary" type="submit">Pesquisar</button>
-            </div>
-        </form>
+    $statusMap = [
+        'aberto'       => ['label' => 'Aberto',      'badge' => 'amber', 'row' => '#E8934A'],
+        'em_andamento' => ['label' => 'Em andamento', 'badge' => 'blue',  'row' => '#4C5FEA'],
+        'resolvido'    => ['label' => 'Resolvido',    'badge' => 'green', 'row' => '#16A87E'],
+        'cancelado'    => ['label' => 'Cancelado',    'badge' => 'slate', 'row' => '#8891AC'],
+    ];
+?>
 
-        <div class="card shadow-sm"><div class="card-body p-0">
-            <table class="table table-striped mb-0">
-                <thead><tr><th>ID</th><th>Título</th><th>Categoria</th><th>Prioridade</th><th>Status</th><th>Ações</th></tr></thead>
-                <tbody>
-                    <?php foreach ($chamados as $c): ?>
-                        <tr>
-                            <td><?= $c['id'] ?></td>
-                            <td><?= htmlspecialchars($c['titulo']) ?></td>
-                            <td><?= htmlspecialchars($c['categoria_nome']) ?></td>
-                            <td><?= ucfirst($c['prioridade']) ?></td>
-                            <td><?= ucfirst($c['status']) ?></td>
-                            <td>
-                                <a href="?url=chamado/editar/<?= $c['id'] ?>" class="btn btn-sm btn-warning">Editar</a>
-                                <a href="?url=chamado/excluir/<?= $c['id'] ?>" class="btn btn-sm btn-danger" onclick="return confirm('Tem certeza?')">Excluir</a>
-                            </td>
-                        </tr>
-                    <?php endforeach; ?>
-                </tbody>
-            </table>
-        </div></div>
+<div class="table-card">
+    <div class="table-card-head">
+        <h3>Todos os chamados</h3>
+        <a href="?url=chamado/criar" class="btn btn-primary btn-sm">+ Novo chamado</a>
     </div>
-</body>
-</html>
+
+    <form method="GET" action="" style="padding: 16px 20px 0 20px;">
+        <input type="hidden" name="url" value="chamado/index">
+        <div class="topbar-search" style="width: 100%; max-width: 420px;">
+            <span>&#8981;</span>
+            <input type="text" name="busca" placeholder="Pesquisar por título ou descrição..." value="<?= htmlspecialchars($_GET['busca'] ?? '') ?>">
+        </div>
+    </form>
+
+    <table class="data-table" style="margin-top: 16px;">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Título</th>
+                <th>Categoria</th>
+                <th>Prioridade</th>
+                <th>Status</th>
+                <th style="text-align:right;">Ações</th>
+            </tr>
+        </thead>
+        <tbody>
+            <?php if (!empty($chamados)): ?>
+                <?php foreach ($chamados as $c):
+                    $status = $statusMap[$c['status']] ?? ['label' => ucfirst($c['status']), 'badge' => 'slate', 'row' => '#8891AC'];
+                ?>
+                    <tr class="has-status" style="--row-color: <?= $status['row'] ?>;">
+                        <td class="mono">#<?= $c['id'] ?></td>
+                        <td class="cell-title"><?= htmlspecialchars($c['titulo']) ?></td>
+                        <td class="cell-muted"><?= htmlspecialchars($c['categoria_nome']) ?></td>
+                        <td class="cell-muted"><?= ucfirst($c['prioridade']) ?></td>
+                        <td><span class="badge badge--<?= $status['badge'] ?>"><?= htmlspecialchars($status['label']) ?></span></td>
+                        <td>
+                            <div class="row-actions">
+                                <a href="?url=chamado/editar/<?= $c['id'] ?>" class="action-btn" title="Editar" aria-label="Editar chamado">&#9998;</a>
+                                <a href="?url=chamado/excluir/<?= $c['id'] ?>" class="action-btn action-btn--danger" title="Excluir" aria-label="Excluir chamado" onclick="return confirm('Tem certeza que deseja excluir este chamado?')">&#128465;</a>
+                            </div>
+                        </td>
+                    </tr>
+                <?php endforeach; ?>
+            <?php else: ?>
+                <tr class="empty-row"><td colspan="6">Nenhum chamado encontrado.</td></tr>
+            <?php endif; ?>
+        </tbody>
+    </table>
+</div>
+
+<?php require_once PARTIAL_PATH . '/footer.php'; ?>

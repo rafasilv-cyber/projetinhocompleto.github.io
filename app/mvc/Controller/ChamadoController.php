@@ -48,8 +48,13 @@ class ChamadoController
      * RF02 - Cadastrar chamado
      * Recebe os dados via formulário POST
      */
-    public function salvar()
+public function salvar()
 {
+    if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+        header('Location: ?url=chamado/criar');
+        exit;
+    }
+
     $titulo = trim($_POST['titulo'] ?? '');
     $categoria_id = $_POST['categoria_id'] ?? null;
     $prioridade = $_POST['prioridade'] ?? 'media';
@@ -63,7 +68,6 @@ class ChamadoController
     }
 
     // Busca um usuário válido no banco (temporário até ter login real)
-    $usuarios = $this->categoriaModel === null ? [] : null; // placeholder, ver nota abaixo
     $usuarioModel = new UsuarioModel();
     $usuariosExistentes = $usuarioModel->listarTodos();
 
@@ -86,51 +90,54 @@ class ChamadoController
      * URL: /chamado/editar/5
      */
     public function editar($id = null)
-    {
-        if (!$id) {
-            header('Location: /chamado/index');
-            exit;
-        }
-
-        $chamado = $this->chamadoModel->buscarPorId((int)$id);
-        $categorias = $this->categoriaModel->listarTodas();
-
-        if (!$chamado) {
-            $_SESSION['erro'] = 'Chamado não encontrado!';
-            header('Location: /chamado/index');
-            exit;
-        }
-
-        require_once VIEW_PATH . '/chamados/editar.php';
+{
+    if (!$id) {
+        header('Location: ?url=chamado/index');
+        exit;
     }
+
+    $chamado = $this->chamadoModel->buscarPorId((int)$id);
+    $categorias = $this->categoriaModel->listarTodas();
+
+    if (!$chamado) {
+        $_SESSION['erro'] = 'Chamado não encontrado!';
+        header('Location: ?url=chamado/index');
+        exit;
+    }
+
+    require_once VIEW_PATH . '/chamados/editar.php';
+}
 
     /**
      * RF02 - Editar chamado (Salvar alterações no banco)
      */
-    public function atualizar($id = null)
-    {
-        if ($_SERVER['REQUEST_METHOD'] === 'POST' && $id) {
-            $dados = [
-                'id'           => (int)$id,
-                'titulo'       => trim($_POST['titulo'] ?? ''),
-                'descricao'    => trim($_POST['descricao'] ?? ''),
-                'status'       => $_POST['status'] ?? 'aberto',
-                'prioridade'   => $_POST['prioridade'] ?? 'media',
-                'categoria_id' => $_POST['categoria_id'] ?? null,
-            ];
+public function atualizar($id = null)
+{
+    if ($_SERVER['REQUEST_METHOD'] === 'POST' && $id) {
+        $dados = [
+            'id'           => (int)$id,
+            'titulo'       => trim($_POST['titulo'] ?? ''),
+            'descricao'    => trim($_POST['descricao'] ?? ''),
+            'status'       => $_POST['status'] ?? 'aberto',
+            'prioridade'   => $_POST['prioridade'] ?? 'media',
+            'categoria_id' => $_POST['categoria_id'] ?? null,
+        ];
 
-            if (empty($dados['titulo']) || empty($dados['descricao'])) {
-                $_SESSION['erro'] = 'Preencha todos os campos obrigatórios!';
-                header("Location: /chamado/editar/{$id}");
-                exit;
-            }
-
-            $this->chamadoModel->atualizar($dados);
-            $_SESSION['sucesso'] = 'Chamado atualizado com sucesso!';
-            header('Location: /chamado/index');
+        if (empty($dados['titulo']) || empty($dados['descricao'])) {
+            $_SESSION['erro'] = 'Preencha todos os campos obrigatórios!';
+            header("Location: ?url=chamado/editar/{$id}");  // ✅ relativo
             exit;
         }
+
+        $this->chamadoModel->atualizar($dados);
+        $_SESSION['sucesso'] = 'Chamado atualizado com sucesso!';
+        header('Location: ?url=chamado/index');              // ✅ relativo
+        exit;
     }
+
+    header('Location: ?url=chamado/index');
+    exit;
+}
 
     /**
      * RF02 - Excluir chamado
@@ -149,4 +156,4 @@ class ChamadoController
     header('Location: ?url=chamado/index');
     exit;
 }
-}       
+}

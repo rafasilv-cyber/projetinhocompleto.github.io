@@ -21,29 +21,35 @@ class UsuarioController
     }
 
     public function salvar()
-    {
-        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-            $nome  = trim($_POST['nome'] ?? '');
-            $email = trim($_POST['email'] ?? '');
-            $senha = $_POST['senha'] ?? '';
+{
+    if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+        $nome  = trim($_POST['nome'] ?? '');
+        $email = trim($_POST['email'] ?? '');
+        $senha = $_POST['senha'] ?? '';
 
-            if (empty($nome) || empty($email) || empty($senha)) {
-                $_SESSION['erro'] = 'Preencha todos os campos!';
-                header('Location: /usuario/criar');
-                exit;
-            }
-
-            $this->usuarioModel->cadastrar(['nome' => $nome, 'email' => $email, 'senha' => $senha]);
-            $_SESSION['sucesso'] = 'Usuário cadastrado com sucesso!';
-            header("Location: ?url=modulo/acao");
+        if (empty($nome) || empty($email) || empty($senha)) {
+            $_SESSION['erro'] = 'Preencha todos os campos!';
+            header('Location: ?url=usuario/criar');
             exit;
         }
+
+        $this->usuarioModel->cadastrar(['nome' => $nome, 'email' => $email, 'senha' => $senha]);
+        $_SESSION['sucesso'] = 'Usuário cadastrado com sucesso!';
+        header('Location: ?url=usuario/index'); // ✅ relativo ao index.php atual, sempre funciona
+        exit;
     }
+}
 
     public function editar($id = null)
     {
-        if (!$id) { header('Location: /usuario/index'); exit; }
+        if (!$id) { header('Location: ?url=usuario/index'); exit; }
+
         $usuario = $this->usuarioModel->buscarPorId((int)$id);
+        if (!$usuario) {
+            $_SESSION['erro'] = 'Usuário não encontrado.';
+            header('Location: ?url=usuario/index');
+            exit;
+        }
         require_once VIEW_PATH . '/usuarios/editar.php';
     }
 

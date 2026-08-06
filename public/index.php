@@ -26,6 +26,7 @@ define('MVC_PATH', APP_PATH . '/mvc');               // Pasta app/mvc
 define('CONTROLLER_PATH', MVC_PATH . '/Controller'); // Pasta app/mvc/Controller
 define('MODEL_PATH', MVC_PATH . '/Model');           // Pasta app/mvc/Model
 define('VIEW_PATH', MVC_PATH . '/View');             // Pasta app/mvc/View
+define('PARTIAL_PATH', __DIR__ . '/partials');       // Componentes compartilhados da interface
 
 // 4. Autoload de Classes (Carrega Database, Controllers e Models automaticamente)
 spl_autoload_register(function (string $className) {
