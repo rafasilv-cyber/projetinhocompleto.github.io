@@ -85,4 +85,16 @@ class HomeModel
 
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
+
+    public function buscarGlobal(string $termo): array
+    {
+        $like = '%' . $termo . '%';
+        $chamados = $this->db->prepare("SELECT c.id, c.titulo, c.status, c.prioridade, cat.nome AS categoria_nome FROM chamados c INNER JOIN categorias cat ON cat.id = c.categoria_id INNER JOIN usuarios u ON u.id = c.usuario_id WHERE c.titulo LIKE :termo OR c.descricao LIKE :termo OR cat.nome LIKE :termo OR u.nome LIKE :termo OR u.email LIKE :termo ORDER BY c.created_at DESC");
+        $chamados->execute([':termo' => $like]);
+        $categorias = $this->db->prepare('SELECT id, nome, descricao FROM categorias WHERE nome LIKE :termo OR descricao LIKE :termo ORDER BY nome');
+        $categorias->execute([':termo' => $like]);
+        $usuarios = $this->db->prepare('SELECT id, nome, email FROM usuarios WHERE nome LIKE :termo OR email LIKE :termo ORDER BY nome');
+        $usuarios->execute([':termo' => $like]);
+        return ['chamados' => $chamados->fetchAll(PDO::FETCH_ASSOC), 'categorias' => $categorias->fetchAll(PDO::FETCH_ASSOC), 'usuarios' => $usuarios->fetchAll(PDO::FETCH_ASSOC)];
+    }
 }

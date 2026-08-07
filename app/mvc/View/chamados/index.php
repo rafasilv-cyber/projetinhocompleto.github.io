@@ -12,6 +12,8 @@
         'resolvido'    => ['label' => 'Resolvido',    'badge' => 'green', 'row' => '#16A87E'],
         'cancelado'    => ['label' => 'Cancelado',    'badge' => 'slate', 'row' => '#8891AC'],
     ];
+
+    $statusFiltroAtivo = $_GET['status'] ?? null;
 ?>
 
 <div class="table-card">
@@ -19,6 +21,13 @@
         <h3>Todos os chamados</h3>
         <a href="?url=chamado/criar" class="btn btn-primary btn-sm">+ Novo chamado</a>
     </div>
+
+    <?php if ($statusFiltroAtivo && isset($statusMap[$statusFiltroAtivo])): ?>
+        <div class="filter-chip">
+            Filtrando por: <?= htmlspecialchars($statusMap[$statusFiltroAtivo]['label']) ?>
+            <a href="?url=chamado/index">Limpar filtro &times;</a>
+        </div>
+    <?php endif; ?>
 
     <form method="GET" action="" style="padding: 16px 20px 0 20px;">
         <input type="hidden" name="url" value="chamado/index">
@@ -52,6 +61,9 @@
                         <td><span class="badge badge--<?= $status['badge'] ?>"><?= htmlspecialchars($status['label']) ?></span></td>
                         <td>
                             <div class="row-actions">
+                                <?php if (!in_array($c['status'], ['resolvido', 'cancelado'], true)): ?>
+                                    <a href="?url=chamado/resolverRapido/<?= $c['id'] ?>" class="action-btn action-btn--success" title="Marcar como resolvido" aria-label="Marcar como resolvido" onclick="return confirm('Marcar o chamado #<?= $c['id'] ?> como resolvido?')">&#10003;</a>
+                                <?php endif; ?>
                                 <a href="?url=chamado/editar/<?= $c['id'] ?>" class="action-btn" title="Editar" aria-label="Editar chamado">&#9998;</a>
                                 <a href="?url=chamado/excluir/<?= $c['id'] ?>" class="action-btn action-btn--danger" title="Excluir" aria-label="Excluir chamado" onclick="return confirm('Tem certeza que deseja excluir este chamado?')">&#128465;</a>
                             </div>

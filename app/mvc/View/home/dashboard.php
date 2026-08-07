@@ -43,46 +43,46 @@
 ?>
 
 <div class="stat-grid">
-    <div class="stat-card stat-card--blue">
+    <a href="?url=chamado/index" class="stat-card stat-card--blue">
         <div class="stat-icon">&#9673;</div>
         <div class="stat-label">Total de chamados</div>
         <div class="stat-value"><?= $totais['total_chamados'] ?? 0 ?></div>
-        <div class="stat-foot">Todos os registros</div>
-    </div>
-    <div class="stat-card stat-card--amber">
+        <div class="stat-foot">Ver todos</div>
+    </a>
+    <a href="?url=chamado/index&status=aberto" class="stat-card stat-card--amber">
         <div class="stat-icon">&#9679;</div>
         <div class="stat-label">Chamados abertos</div>
         <div class="stat-value"><?= $totais['chamados_abertos'] ?? 0 ?></div>
-        <div class="stat-foot">Aguardando atendimento</div>
-    </div>
-    <div class="stat-card stat-card--slate">
+        <div class="stat-foot">Ver abertos</div>
+    </a>
+    <a href="?url=chamado/index&status=em_andamento" class="stat-card stat-card--slate">
         <div class="stat-icon">&#9679;</div>
         <div class="stat-label">Em andamento</div>
         <div class="stat-value"><?= $totais['chamados_em_andamento'] ?? 0 ?></div>
-        <div class="stat-foot">Sendo tratados agora</div>
-    </div>
-    <div class="stat-card stat-card--green">
+        <div class="stat-foot">Ver em andamento</div>
+    </a>
+    <a href="?url=chamado/index&status=resolvido" class="stat-card stat-card--green">
         <div class="stat-icon">&#10003;</div>
         <div class="stat-label">Resolvidos</div>
         <div class="stat-value"><?= $totais['chamados_resolvidos'] ?? 0 ?></div>
-        <div class="stat-foot">Finalizados com sucesso</div>
-    </div>
-    <div class="stat-card stat-card--violet">
+        <div class="stat-foot">Ver resolvidos</div>
+    </a>
+    <a href="?url=categoria/index" class="stat-card stat-card--violet">
         <div class="stat-icon">&#9636;</div>
         <div class="stat-label">Categorias</div>
         <div class="stat-value"><?= $totais['total_categorias'] ?? 0 ?></div>
-        <div class="stat-foot">Cadastradas</div>
-    </div>
-    <div class="stat-card stat-card--blue">
+        <div class="stat-foot">Gerenciar categorias</div>
+    </a>
+    <a href="?url=usuario/index" class="stat-card stat-card--blue">
         <div class="stat-icon">&#9679;</div>
         <div class="stat-label">Usuários</div>
         <div class="stat-value"><?= $totais['total_usuarios'] ?? 0 ?></div>
-        <div class="stat-foot">Cadastrados</div>
-    </div>
+        <div class="stat-foot">Gerenciar usuários</div>
+    </a>
 </div>
 
 <div class="panel-grid">
-    <div class="panel"> 
+    <div class="panel">
         <div class="panel-title">Chamados por categoria</div>
         <div class="panel-subtitle">Distribuição do total de chamados por categoria cadastrada</div>
 
@@ -139,7 +139,14 @@
 <div class="table-card">
     <div class="table-card-head">
         <h3>Últimos chamados registrados</h3>
-        <a href="?url=chamado/index" class="btn btn-outline btn-sm">Ver todos</a>
+        <div style="display:flex; align-items:center; gap: 10px;">
+            <div class="seg-control">
+                <a href="?url=home&limite=5" class="<?= $limiteAtual == 5 ? 'is-active' : '' ?>">5</a>
+                <a href="?url=home&limite=10" class="<?= $limiteAtual == 10 ? 'is-active' : '' ?>">10</a>
+                <a href="?url=home&limite=20" class="<?= $limiteAtual == 20 ? 'is-active' : '' ?>">20</a>
+            </div>
+            <a href="?url=chamado/index" class="btn btn-outline btn-sm">Ver todos</a>
+        </div>
     </div>
     <table class="data-table">
         <thead>
@@ -149,6 +156,7 @@
                 <th>Categoria</th>
                 <th>Solicitante</th>
                 <th>Status</th>
+                <th style="text-align:right;">Ações</th>
             </tr>
         </thead>
         <tbody>
@@ -162,10 +170,18 @@
                         <td class="cell-muted"><?= htmlspecialchars($item['categoria_nome']) ?></td>
                         <td class="cell-muted"><?= htmlspecialchars($item['usuario_nome']) ?></td>
                         <td><span class="badge badge--<?= $status['badge'] ?>"><?= htmlspecialchars($status['label']) ?></span></td>
+                        <td>
+                            <div class="row-actions">
+                                <?php if (!in_array($item['status'], ['resolvido', 'cancelado'], true)): ?>
+                                    <a href="?url=chamado/resolverRapido/<?= $item['id'] ?>" class="action-btn action-btn--success" title="Marcar como resolvido" aria-label="Marcar como resolvido" onclick="return confirm('Marcar o chamado #<?= $item['id'] ?> como resolvido?')">&#10003;</a>
+                                <?php endif; ?>
+                                <a href="?url=chamado/editar/<?= $item['id'] ?>" class="action-btn" title="Editar" aria-label="Editar chamado">&#9998;</a>
+                            </div>
+                        </td>
                     </tr>
                 <?php endforeach; ?>
             <?php else: ?>
-                <tr class="empty-row"><td colspan="5">Nenhum chamado encontrado.</td></tr>
+                <tr class="empty-row"><td colspan="6">Nenhum chamado encontrado.</td></tr>
             <?php endif; ?>
         </tbody>
     </table>

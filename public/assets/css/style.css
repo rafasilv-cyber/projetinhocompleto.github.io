@@ -117,22 +117,14 @@ select:focus-visible {
 .sidebar-brand {
     display: flex;
     align-items: center;
-    gap: 11px;
-    padding: 4px 10px 24px 10px;
+    gap: 10px;
+    padding: 4px 10px 24px;
 }
-.brand-mark {
-    width: 36px;
-    height: 36px;
-    border-radius: 10px;
-    background: linear-gradient(150deg, var(--accent), #7B8CF5);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-family: var(--font-display);
-    font-weight: 700;
-    font-size: 14px;
-    color: #fff;
-    flex-shrink: 0;
+.brand-logo {
+    height: 60px;   /* era 34px — aumenta até ficar do tamanho que você gosta */
+    width: auto;
+    max-width: 100%;
+    object-fit: contain;
 }
 .brand-text { display: flex; flex-direction: column; line-height: 1.25; }
 .brand-text strong { font-family: var(--font-display); font-size: 15px; font-weight: 700; }
@@ -239,27 +231,117 @@ select:focus-visible {
 }
 .icon-btn:hover { background: var(--surface); }
 
-.user-chip { display: flex; align-items: center; gap: 10px; padding-left: 14px; border-left: 1px solid var(--line); }
-.user-avatar {
-    width: 34px;
-    height: 34px;
-    flex: 0 0 34px;
-    overflow: hidden;
-    border-radius: 50%;
-    background: var(--accent-soft);
-    color: var(--accent-dark);
-    font-family: var(--font-display);
+/* ---------- Dropdown de notificações (via <details>, sem JS) ---------- */
+.notif-dropdown { position: relative; }
+.notif-dropdown summary {
+    list-style: none;
+    position: relative;
+}
+.notif-dropdown summary::-webkit-details-marker { display: none; }
+.notif-dropdown summary::marker { content: ''; }
+
+.notif-badge {
+    position: absolute;
+    top: -4px;
+    right: -4px;
+    min-width: 16px;
+    height: 16px;
+    padding: 0 4px;
+    border-radius: 999px;
+    background: var(--red);
+    color: #fff;
+    font-size: 10px;
     font-weight: 700;
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 13px;
+    border: 2px solid var(--card);
 }
-.user-avatar img {
+
+.notif-panel {
+    display: none;
+    position: absolute;
+    top: calc(100% + 12px);
+    right: 0;
+    width: 340px;
+    max-width: 86vw;
+    background: var(--card);
+    border: 1px solid var(--line);
+    border-radius: var(--radius-md);
+    box-shadow: var(--shadow-pop);
+    overflow: hidden;
+    z-index: 30;
+}
+.notif-dropdown[open] .notif-panel { display: block; }
+
+.notif-panel-head {
     display: flex;
-    width: 40px;
-    height: 40px;
+    align-items: center;
+    justify-content: space-between;
+    padding: 14px 16px;
+    border-bottom: 1px solid var(--line);
+}
+.notif-panel-head strong { font-size: 13px; }
+.notif-panel-head a { font-size: 11.5px; font-weight: 600; color: var(--accent); }
+
+.notif-list { max-height: 320px; overflow-y: auto; }
+.notif-item {
+    display: flex;
+    gap: 10px;
+    padding: 12px 16px;
+    border-bottom: 1px solid var(--line);
+    color: var(--text);
+}
+.notif-item:last-child { border-bottom: none; }
+.notif-item:hover { background: var(--surface); }
+.notif-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--slate); margin-top: 6px; flex-shrink: 0; }
+.notif-item.is-unread .notif-dot { background: var(--accent); }
+.notif-item p { font-size: 12.5px; margin: 0; line-height: 1.4; }
+.notif-item.is-unread p { font-weight: 600; }
+.notif-time { font-size: 10.5px; color: var(--text-muted); margin-top: 3px; display: block; }
+.notif-empty { padding: 28px 16px; text-align: center; color: var(--text-muted); font-size: 12.5px; }
+
+/* ---------- Seletor segmentado (ex: 5 / 10 / 20 linhas) ---------- */
+.seg-control {
+    display: inline-flex;
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: 999px;
+    padding: 3px;
+    gap: 2px;
+}
+.seg-control a {
+    padding: 5px 12px;
+    border-radius: 999px;
+    font-size: 11.5px;
+    font-weight: 600;
+    color: var(--text-muted);
+}
+.seg-control a.is-active { background: var(--card); color: var(--text); box-shadow: var(--shadow-card); }
+
+/* ---------- Indicador de filtro ativo (chamados por status) ---------- */
+.filter-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: var(--accent-soft);
+    color: var(--accent-dark);
+    border-radius: 999px;
+    padding: 7px 14px;
+    font-size: 12.5px;
+    font-weight: 600;
+    margin: 16px 20px 0 20px;
+}
+.filter-chip a { text-decoration: underline; }
+
+.user-chip { display: flex; align-items: center; gap: 10px; padding-left: 14px; border-left: 1px solid var(--line); }
+.user-avatar {
+    width: 34px;
+    height: 34px;
+    border-radius: 50%;
     object-fit: cover;
+    background: var(--accent-soft);
+    border: 1px solid var(--line);
 }
 .user-meta { display: flex; flex-direction: column; line-height: 1.25; }
 .user-meta strong { font-size: 13px; }
@@ -306,13 +388,18 @@ select:focus-visible {
 }
 
 .stat-card {
+    display: block;
     background: var(--card);
     border: 1px solid var(--line);
     border-radius: var(--radius-md);
     padding: 18px;
     box-shadow: var(--shadow-card);
     border-left: 3px solid var(--stat-color, var(--accent));
+    color: inherit;
+    text-decoration: none;
+    transition: transform .12s ease, box-shadow .12s ease;
 }
+a.stat-card:hover { transform: translateY(-2px); box-shadow: var(--shadow-pop); cursor: pointer; }
 .stat-icon {
     width: 36px;
     height: 36px;
@@ -541,6 +628,7 @@ select:focus-visible {
 }
 .action-btn:hover { background: var(--surface); color: var(--text); }
 .action-btn--danger:hover { background: var(--red-soft); color: #B23A4C; border-color: #F3C4CC; }
+.action-btn--success:hover { background: var(--green-soft); color: #0E7457; border-color: #BFEBDA; }
 
 /* =========================================================================
    BOTÕES
@@ -570,6 +658,12 @@ select:focus-visible {
 
 .btn-block { width: 100%; }
 .btn-sm { padding: 7px 12px; font-size: 12.5px; }
+
+.search-section { padding: 20px; border-top: 1px solid var(--line); }
+.search-section h3 { margin: 0 0 12px; font-size: 14px; }
+.search-result { display: flex; flex-direction: column; gap: 4px; padding: 11px 12px; border-radius: var(--radius-sm); color: var(--text); }
+.search-result:hover { background: var(--surface); }
+.search-result span { color: var(--text-muted); font-size: 12.5px; }
 
 /* =========================================================================
    FORMULÁRIOS
@@ -629,6 +723,7 @@ select:focus-visible {
         width: 76px;
         padding: 18px 10px;
     }
+    .brand-logo { width: 52px; height: 52px; border-radius: 50%; }
     .brand-text, .nav-link span:not(.nav-icon), .nav-section { display: none; }
     .nav-link { justify-content: center; }
     .sidebar-brand { justify-content: center; padding-bottom: 18px; }

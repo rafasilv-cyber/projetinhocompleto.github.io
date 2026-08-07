@@ -11,27 +11,27 @@ class ChamadoModel
     }
 
     /**
-     * RF02 - Listar todos os chamados
-     * Traz os nomes do Usuário e da Categoria usando JOIN
+     * RF02 - Cadastrar novo chamado
+     * Retorna o ID do chamado recém-criado (0 em caso de falha), para permitir
+     * vincular eventos (ex: notificações) ao registro criado.
      */
-
-public function salvar($titulo, $descricao, $categoria_id, $usuario_id, $prioridade)
+    public function salvar($titulo, $descricao, $categoria_id, $usuario_id, $prioridade): int
     {
-        // Conecta ao banco e prepara a query de inserção
         $sql = "INSERT INTO chamados (titulo, descricao, categoria_id, usuario_id, prioridade) 
                 VALUES (:titulo, :descricao, :categoria_id, :usuario_id, :prioridade)";
-        
+
         $stmt = $this->db->prepare($sql);
-        
-        // Substitui as variáveis com segurança
         $stmt->bindValue(':titulo', $titulo);
         $stmt->bindValue(':descricao', $descricao);
         $stmt->bindValue(':categoria_id', $categoria_id);
         $stmt->bindValue(':usuario_id', $usuario_id);
         $stmt->bindValue(':prioridade', $prioridade);
-        
-        // Executa o salvamento no banco de dados
-        return $stmt->execute();
+
+        if (!$stmt->execute()) {
+            return 0;
+        }
+
+        return (int) $this->db->lastInsertId();
     }
 
     public function listarTodos()
@@ -44,6 +44,23 @@ public function salvar($titulo, $descricao, $categoria_id, $usuario_id, $priorid
 
         $stmt = $this->db->prepare($sql);
         $stmt->execute();
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
+
+    /**
+     * Lista chamados filtrando por status — usado pelos cards clicáveis do dashboard.
+     */
+    public function listarPorStatus(string $status): array
+    {
+        $sql = "SELECT c.*, cat.nome AS categoria_nome, u.nome AS usuario_nome 
+                FROM chamados c
+                INNER JOIN categorias cat ON c.categoria_id = cat.id
+                INNER JOIN usuarios u ON c.usuario_id = u.id
+                WHERE c.status = :status
+                ORDER BY c.created_at DESC";
+
+        $stmt = $this->db->prepare($sql);
+        $stmt->execute([':status' => $status]);
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 
@@ -81,25 +98,7 @@ public function salvar($titulo, $descricao, $categoria_id, $usuario_id, $priorid
     }
 
     /**
-     * RF02 - Cadastrar novo chamado
-     */
-    public function cadastrar(array $dados)
-    {
-        $sql = "INSERT INTO chamados (titulo, descricao, prioridade, categoria_id, usuario_id) 
-                VALUES (:titulo, :descricao, :prioridade, :categoria_id, :usuario_id)";
-
-        $stmt = $this->db->prepare($sql);
-        return $stmt->execute([
-            ':titulo'       => $dados['titulo'],
-            ':descricao'    => $dados['descricao'],
-            ':prioridade'   => $dados['prioridade'],
-            ':categoria_id' => $dados['categoria_id'],
-            ':usuario_id'   => $dados['usuario_id']
-        ]);
-    }
-
-    /**
-     * RF02 - Editar chamado existente
+     * RF02 - Editar chamado existente (edição completa via formulário)
      */
     public function atualizar(array $dados)
     {
@@ -120,6 +119,16 @@ public function salvar($titulo, $descricao, $categoria_id, $usuario_id, $priorid
             ':prioridade'   => $dados['prioridade'],
             ':categoria_id' => $dados['categoria_id']
         ]);
+    }
+
+    /**
+     * Atualização rápida — só o status, usada pela ação "Marcar como resolvido"
+     * na listagem e no dashboard, sem precisar abrir o formulário completo.
+     */
+    public function atualizarStatus(int $id, string $status): bool
+    {
+        $stmt = $this->db->prepare("UPDATE chamados SET status = :status WHERE id = :id");
+        return $stmt->execute([':status' => $status, ':id' => $id]);
     }
 
     /**
